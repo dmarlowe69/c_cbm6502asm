@@ -4,13 +4,13 @@ Forward:
 
 This version of the classic cbm6502asm features a few bug fixes and enhancements.
 
-First the command line argument parseing for the switches didn't work correctly, and once fixed it would only parse the switches i there
-was no intervening space between the switches. It will now handle both situations.
+First the command line argument parseing for the switches didn't work correctly, and once fixed it would only parse the switches if there
+were no intervening spaces between the switches. It will now handle both situations.
 
-The enhancments have to do wcill making it more compatibily with source code written for the Commodore Macro Assembler Development System (MADS).
-This was done as the was volumes of code written using this native package on an actual C64 (and later emulator) that the authur didn't want
-to have to modify in order to build the software. The program allows include files using the .include directive. Addtion "include" directives
-were added for compatibily with MADS, anmely .LIB and .FIL although the behavior is from the cbm6502asm not MADS.
+The enhancments have to do will making it more compatibile with source code written for the Commodore Macro Assembler Development System (MADS).
+This was done as there are volumes of code written using this native package on an actual C64 (and later emulator) that the authur didn't want
+to have to modify in order to build the software. The program allows "include" files using the .include directive. Addtion "include" directives
+were added for compatibily with MADS, namely .LIB and .FIL although the behavior is from the cbm6502asm not MADS.
 
 In addtion, there is a compaion utility called OBJ2PRG that is used to convert the "Commodore Interchange Format" object files output from both
 cbm6502asn and the assembler64 from MADS. Using the orginal Commodore package required the OBJ code to the loaded into memory with a "Loader"
