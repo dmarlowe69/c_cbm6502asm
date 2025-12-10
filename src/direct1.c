@@ -308,6 +308,7 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		for (i = 0; (srcfile[i] = toupper(s3[i])); i++)
 			;
 		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
+		printf("\nInclude File %s\n",s3);
 		file_src = fopen(s3, "r");
 		if (!file_src) {
 			file_src = incl_stack[incl_sp++];
@@ -344,6 +345,7 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		for (i = 0; (srcfile[i] = toupper(s3[i])); i++)
 			;
 		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
+		printf("\nLIB File %s\n",s3);
 		file_src = fopen(s3, "r");
 		if (!file_src) {
 			file_src = incl_stack[incl_sp++];
@@ -380,6 +382,7 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		for (i = 0; (srcfile[i] = toupper(s3[i])); i++)
 			;
 		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
+        printf("\nFIL File %s\n",s3);		
 		file_src = fopen(s3, "r");
 		if (!file_src) {
 			file_src = incl_stack[incl_sp++];

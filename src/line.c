@@ -10,6 +10,7 @@ void parselin() {
 	char linestat[FIRSTCHAR + 1];
 	char linetmp[128] = " ";
 	char linetmp2[128] = " .ENDIF ;";
+	char linetmp3[128] = ";";
     
 	if(crlf == FALSE) {
     if(DEBUG) printf("\nLF-%s\n",line);
@@ -65,6 +66,14 @@ void parselin() {
 			strcat(linetmp2,line);
 			strcpy(line,linetmp2);
 			if(DEBUG) printf("\nAdjusted old style endif - %s\n",line);
+	}
+
+    if(line[0] == '.'){
+		if(strstr(line,".END")) {
+			strcat(linetmp3,line);
+			strcpy(line,linetmp3);
+			if(DEBUG) printf("\nComment out .END - %s\n",line);
+		}
 	}
 	
 	p1[0] = p2[0] = p3[0] = 0; /* fields */
