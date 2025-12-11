@@ -1,28 +1,28 @@
-# Commodore 6502ASM
+Commodore 6502ASM
 
 Forward:
 
 This version of the classic cbm6502asm features a few bug fixes and enhancements.
 
-First the command line argument parseing for the switches didn't work correctly, and once fixed it would only parse the switches if there
-were no intervening spaces between the switches. It will now handle both situations.
+First the command line argument parseing for the switches didn't work correctly, and once fixed it would only parse the switches if there were 
+no intervening spaces between the switches. It will now handle both situations.
 
-The enhancments have to do will making it more compatibile with source code written for the Commodore Macro Assembler Development System (MADS).
-This was done as there are volumes of code written using this native package on an actual C64 (and later emulator) that the authur didn't want
-to have to modify in order to build the software. The program allows "include" files using the .include directive. Addtion "include" directives
-were added for compatibily with MADS, namely .LIB and .FIL although the behavior is from the cbm6502asm not MADS.
+The enhancments have to do will making it more compatibile with source code written for the Commodore Macro Assembler Development System (MADS). 
+This was done as there are volumes of code written using this native package on an actual C64 (and later emulator) that the authur didn't want 
+to have to modify in order to build the software. The program allows "include" files using the .include directive. 
+Addtional "include" directives were added for compatibily with MADS, namely .LIB and .FIL although the behavior is from the cbm6502asm not MADS.
 
 In addtion, there is a compaion utility called OBJ2PRG that is used to convert the "Commodore Interchange Format" object files output from both
 cbm6502asn and the assembler64 from MADS. Using the orginal Commodore package required the OBJ code to the loaded into memory with a "Loader"
-program and then saving the memory backout to disk using a resident machine language monitor. Why Commodore didn't supply such a tool is a mystery.
+program and then saving the memory back out to disk using a resident machine language monitor. Why Commodore didn't supply such a tool is a mystery.
 
 It should be noted that SEQ files output form the MADS source code editor are terminated with 0x0D (carridge return - CR) while windows text files
-are terminate with 0x0A 0X0D pair (line feed - crridge return. Switches were added to select which EOL (end-of-line) to use,
+are terminate with 0x0A 0X0D pair (line feed - carridge return. Switches were added to select which EOL (end-of-line) to use,
 /Z for CR
 /U for LF-CR
 
 The default source code extension is .SRC but you can also specify /K force an .ASM extension with was the preference of the authur (/J for the .SRC
-extension if the default. Any "include" files referenced in the source code must supply the required extension. This behavior is a modications 
+extension is the default). Any "include" files referenced in the source code must supply the required extension. This behavior is a modication
 of the orginal cbm6502asm which would append a .src to the included file name. 
 
 
