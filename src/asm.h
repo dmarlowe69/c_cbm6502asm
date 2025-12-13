@@ -9,7 +9,7 @@
 #define LINELENG 134  /* maximum line length */
 #define FIRSTCHAR 32  /* pos of source statement in list file */
 #define MAXCNDLEV 128 /* conditionals may be nested 16x this */
-#define MAXINCL 6     /* maximum include nesting depth */
+#define MAXINCL 8     /* maximum include nesting depth REV was 6 */
 #define TRUE 1
 #define FALSE 0
 
