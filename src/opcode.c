@@ -226,13 +226,18 @@ char parseopr() {
 	}
 	if (*s3 == '#') { /* immediate addressing mode */
 		s3++;
-		if ((*s3 == '\'' || *s3 == '\"') && isspace(s3[2])) s3[2] = *s3;
+		//if ((*s3 == '\'' || *s3 == '\"') && isspace(s3[2])) {
+		if ((*s3 == '\'' || *s3 == '\"' || s3[2] == '\'' || s3[2] == '\"') && (isspace(s3[3]) || s3[3] == ';')) {
+		s3[3] = 0;
+	    s3[2] = *s3;
+		if(DEBUG) printf("\nimmediate addressing mode character= %s - %x - %x - %x - %x\n",s3,s3[0],s3[1],s3[2],s3[3]);
+		}
 		known = evaluate(s3, &l);
 		j = searchstr(nm7, s2, 3);
 		if (j >= 0) {
 			d[data++] = l & 255;
 			if ((op7[j] & 0x00ff) == 0x00f4) d[data++] = l >> 8;
-			if (!known || l < 256 || (op7[j] & 0x00ff) == 0x00f4)
+			if (!known || l < 256 || (op7[j] & 0x00ff) == 0x00f4) 
 				return (op7[j]);
 		}
 		display_error(error = 'O');
