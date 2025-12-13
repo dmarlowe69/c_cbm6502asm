@@ -102,18 +102,22 @@ long evalchar(char t) {
 	long con = 0;
 	char c;
 	while ((c = *lp)) { /* test for end of field */
+		if(DEBUG) printf("\n char %2x - %2x - %2x\n",c,lp[0],lp[1]);
 		lp++;
 		if (t != c) /* test for terminator */
 			con = (con << 8) + c;
 		else if (*lp == t) { /* if double terminator use as char */
+			if(DEBUG) printf("\nDouble Terminator - %2x\n",t);
 			con = (con << 8) + *lp;
 			lp++;
+			if(DEBUG) printf("\ncon = %x\n",con);
 		} else
 			break; /* terminator found */
 	}
 	if (!con || con & 0xffff0000) /* error if more than 2 chars or */
 		display_error(
 		        error = 'V'); /* no characters and no terminator */
+
 	return (con);                 /* end of expression found */
 }
 
