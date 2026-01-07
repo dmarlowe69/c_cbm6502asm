@@ -1,5 +1,5 @@
 //#include <time.h>
-#define LX 
+#define LX
 #include "asm.h"
 #include "template.h"
 
@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
 	long oldbytes;
 	int i, first = TRUE;
 	crlf = FALSE;
+	srctype = 2;   //BLANK
 	srcext = TRUE; // TRUE = .src FALSE = .asm
 	DEBUG = FALSE;
 	printf("\n\n\nCBM6502ASM V072882\n(C) 1982 BY COMMODORE BUSINESS MACHINES\n");	
@@ -17,11 +18,26 @@ int main(int argc, char *argv[]) {
 	while (*src) {          /* as long as there are more src files */
 		for (i = 0; (srcfile[i] = toupper(src[i])); i++)
 			;
-		if(srcext == TRUE) {
-			appendef(srcfile, ".src");
-		} else {
-			appendef(srcfile, ".asm");
-		}
+		switch(srctype) {
+					case 0:
+					strcpy(strsrcext,".src");
+					appendef(srcfile, ".src");
+					break;
+				case 1:
+					strcpy(strsrcext,".asm");
+					appendef(srcfile, ".asm");
+					break;
+				case 2:
+					strcpy(strsrcext,"");
+					appendef(srcfile, "");
+					break;
+				default:
+					strcpy(strsrcext,"");
+					appendef(srcfile, "");
+			}
+
+		//appendef(srcfile, ".asm");
+		
 		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
 		for (i = strlen(srcfile); i > 0;
 		     i--) /* extract path, if any for tmp file */
@@ -33,6 +49,9 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 		if (first) {
+			
+			printf("\nSource File %s\n",srcfile);	
+			
 			if ((file_src = fopen(srcfile, "r")) == NULL)
 				error_msg("error opening source file:", srcfile,
 				          4);
@@ -151,7 +170,12 @@ void open_files(int argc, char *argv[]) { /* open files and initialize things */
 		error_msg("too many output files specified", "", 2); /* error */
 	if (*p == '=')     /* src files */
 		src = ++p; /* pointer to beginning of source file list */
-
+//
+//REV 25DEC2025 FIX SWITCH ARGUMENTS SEPERATED BY SPACES
+//AS WRITTEN SWITCH ARGUMENTS HAD TO BE A SINGLE STRING
+// SUCH AS   /A/B/C/D
+//FIXED ALLOWS /A /B /C /D
+//
     if(argc > 2) {
 		
 		for(int k=2;k<argc;k++) {
@@ -167,6 +191,13 @@ void open_files(int argc, char *argv[]) { /* open files and initialize things */
 		if (*p == '/') {
 			p++;
 			switch (toupper(c = *p)) {
+				case 'B':
+					srctype = *++p - '0';
+					if (srctype >= 0 && srctype <= 2) break;
+					error_msg(
+					        "illegal parameter after /B "
+					        "switch",
+					        p, 2);
 				case 'Q':
 					DEBUG = TRUE;
 					break;
@@ -175,12 +206,6 @@ void open_files(int argc, char *argv[]) { /* open files and initialize things */
 					break;
 				case 'U':
 					crlf = FALSE;
-					break;
-				case 'J':
-					srcext = TRUE;
-					break;
-				case 'K':
-					srcext = FALSE;
 					break;
 				case 'A':
 					absasm = TRUE;
