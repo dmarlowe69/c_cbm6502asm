@@ -2,6 +2,7 @@ CFLAGS=-Wall -Werror -Wno-deprecated-declarations -Wno-char-subscripts -Wno-form
 SDIR=src
 ODIR=build
 EXECUTABLE=$(ODIR)/cbm6502asm
+BIN=C:\BIN
 
 _OBJS = asm.o direct1.o direct2.o express.o help.o line.o macrodef.o opcode.o outline.o pass1.o pass2.o symbol.o
 
@@ -18,6 +19,9 @@ $(EXECUTABLE): $(OBJS) $(HEADERS)
 $(ODIR)/%.o: $(SDIR)/%.c
 	@mkdir -p $$(dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+install:
+	cp $(EXECUTABLE).exe $(BIN)
 
 clean:
 	rm -rf $(ODIR)
