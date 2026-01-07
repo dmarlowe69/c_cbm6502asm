@@ -12,18 +12,45 @@ This was done as there are volumes of code written using this native package on 
 to have to modify in order to build the software. The program allows "include" files using the .include directive. 
 Addtional "include" directives were added for compatibily with MADS, namely .LIB and .FIL although the behavior is from the cbm6502asm not MADS.
 
+Some code MADS code was found to have other non-standard syntax that the resident assembler would except. One is these cases is the directive
+.SKIP where the number of lines to skip was specified without a space between the directive and the operand, i.e. .SKIP3.
+This specific case has been fixed in addtion to a few other found along the way including .SKI1, .SKI2, .SKI3 and .SKI (which is the same as .SKI1).
+
+Also there was an issue with immediate mode character arguments. The case were the character designator "'" was used as the character argument 
+the assembly would fail in some cases. This has been fixed:
+
+FOR CHARACTER DESIGNATOR WITH A "'" AND CHARACTERS FOLLOWING.
+
+ LDA #'''               WORKED
+ LDA #''';	            FAILED
+ LDA #''' ;	            FAILED
+ LDA #'''    ;COMMENT	FAILED
+
+ NOW ALL CASES WORK
+ 
+In addtion, a special case of LDA #'' would fail. It now works.
+
+In addtion, a special case of LDA #' with an implied 0x20 as it operand would fail. It now works.
+
+ 
+It was also discovered that the MADS assembler allowed Indirect Indexed address to be be formed as LDA ($ZEROPG)Y rather than the standard
+syntax of LDA ($ZEROPG),Y. This was addressed by allowing either syntax.
+
 In addtion, there is a compaion utility called OBJ2PRG that is used to convert the "Commodore Interchange Format" object files output from both
 cbm6502asn and the assembler64 from MADS. Using the orginal Commodore package required the OBJ code to the loaded into memory with a "Loader"
 program and then saving the memory back out to disk using a resident machine language monitor. Why Commodore didn't supply such a tool is a mystery.
 
 It should be noted that SEQ files output form the MADS source code editor are terminated with 0x0D (carridge return - CR) while windows text files
 are terminate with 0x0A 0X0D pair (line feed - carridge return. Switches were added to select which EOL (end-of-line) to use,
-/Z for CR
-/U for LF-CR
 
-The default source code extension is .SRC but you can also specify /K force an .ASM extension with was the preference of the authur (/J for the .SRC
-extension is the default). Any "include" files referenced in the source code must supply the required extension. This behavior is a modication
-of the orginal cbm6502asm which would append a .src to the included file name. 
+/Z for CR
+/U for CRLF
+
+The default source code extension is NONE but you can also specify .SRC or .ASM with the "B"
+Switch (See /Bn below).
+Any "include" files referenced in the source code must supply the required extension.
+This behavior is a modication of the orginal cbm6502asm which would append a .src
+to the included file name. 
 
 
 This is the source code of the 6502/65C02/65CE02 assembler developed and used by Commodore for the C65 project.
@@ -96,10 +123,14 @@ Switches  (either upper or lower case):
 
 		New Switches Added to this version
 		
-		/Z input source line terminated by CRLF
-		/U input source line terminated by LF
-		/J input source extension .src (only applys to source files on the command line)
-		/K input source extension .asm (only applys to source files on the command line)
+		/Z input source line terminated by CR
+		/U input source line terminated by LF or CRLF
+		
+		/Bn sourcefile ext
+				/B0 for .src   
+				/B1 for .asm
+				/B2 for no ext
+
 		/Q DEBUG Flag set to TRUE (Default = FALSE)
 
 		Note:
@@ -114,6 +145,9 @@ Switches  (either upper or lower case):
 		such as:
 		 .LIB SAMPLE.ASM
 		 
+		However the some source code will have no extension definded in the source file but the actual file
+        has an externsion of .src. In this case the assembler checks the /B0 switch and when an include file has no extension
+		defined, i.e. no .src, the one will be appended.		
 		 
 		
 Since the defaults are reasonable, a typical invokation of the assembler would be
