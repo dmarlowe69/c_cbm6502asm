@@ -32,10 +32,14 @@ void help() {
 	printf("/V don't print cross reference\n");
 	printf("/X print cross reference (default)\n");
 	printf("\nNew Switches\n\n");
-	printf("/Z input source line terminated CRLF\n");
-	printf("/U input source line terminated LF\n");
-	printf("/J input source extension .src\n");
-	printf("/K input source extension .asm\n");
+	
+	printf("/Bn sourcefile ext /B0 for .src\n");
+	printf("                   /B1 for .asm\n");
+	printf("                   /B2 for no ext\n\n");
+	
+	printf("/Z input source line terminated CR\n");
+	printf("/U input source line terminated LF or CRLF\n\n");
+	
 	printf("/Q Enable DEBUG Statements\n");
 
 }

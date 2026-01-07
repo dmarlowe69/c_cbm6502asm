@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define STATLINE "                                " /* spacer for status */
-#define VERSION "V1.0"                              /* version number */
+#define VERSION "V072882"                           /* version number */
 #define DEFCPUTYPE 3  /* default to Commodore 4502 assembly */
 #define LINELENG 134  /* maximum line length */
 #define FIRSTCHAR 32  /* pos of source statement in list file */
@@ -140,5 +140,7 @@ LX char line[2 * LINELENG]; /* extra space for macro expansion to extend line */
 LX char d[256], addr, data, equ, known;
 
 LX int crlf;
+LX int srctype;              /* 0=src, 1=asm, 2=no extension */
 LX int srcext;
 LX int DEBUG;
+LX char strsrcext[LINELENG];
