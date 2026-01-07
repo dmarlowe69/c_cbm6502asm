@@ -74,12 +74,14 @@ int dir2dot() {
 	/* pass 2 directives */
 
 	if (!strcmp(s2, ".END")) {
-		if (!isspace(line[0])) display_error(error = 'F');
-		clear_local();
-		if (condlevel) error_msg("Conditional in progress", "", 0);
-		if (macrolevel)
-			error_msg("Macro definition in progress", "", 0);
-		return (endflag = 1);
+		//if (!isspace(line[0])) display_error(error = 'F');
+		//clear_local();
+		//if (condlevel) error_msg("Conditional in progress", "", 0);
+		//if (macrolevel)
+		//	error_msg("Macro definition in progress", "", 0);
+		//return (endflag = 1);
+		printf("\nEnd of File (EOF)\n");
+		return 1;
 	}
 
 	if (!strcmp(s2, ".RADIX") || !strcmp(s2, "RAD") ||
@@ -246,6 +248,36 @@ int dir2dot() {
 	if (!isspace(line[0])) {
 		display_error(error = 'F');
 	}
+//
+//
+//	
+	if (!strcmp(s2, ".OPTION") || !strcmp(s2, ".OPT")) {
+	
+		if (!strcmp(s3, "LIST") || !strcmp(s3, "LIS")) {
+			if (list < 1) list++;
+			line[0] = mlist + '1';
+			line[1] = list ? '1' : '0';
+			line[2] = 0;
+			spechar = 'L';
+			return 1;
+			}
+		
+	if (!strcmp(s3, "NOLIST") || !strcmp(s3, "NOL") ||
+	    !strcmp(s3, "NLIST") ||	
+	    !strcmp(s3, "NLIS") ||
+		!strcmp(s3, "NLI")) {
+		list--;
+		line[0] = mlist + '1';
+		line[1] = list ? '1' : '0';
+		line[2] = 0;
+		spechar = 'L';
+		return 1;
+		}
+		
+	} //OPTION	
+//
+//
+//	
 	if (!strcmp(s2, ".MLIST") || !strcmp(s2, ".MLI") ||
 	    !strcmp(s2, ".MLIS")) {
 		mlist = 1;
@@ -315,13 +347,66 @@ int dir2dot() {
 		if (!error) spechar = 'p';
 		return 1;
 	}
-	if (!strcmp(s2, ".SPACE") || !strcmp(s2, ".SKIP")) {
-		if ((j = evaluate(s3, &l) && !error))
+//
+//SPECIAL CASE OF .SKIP3
+//	
+	if (!strcmp(s2, ".SKIP3")) {
+		s3 = "3";
+		l = 3;
+		sprintf(line, "%ld\0%c", l, spechar = 's');
+		return 1;
+   }
+	
+//
+//SPECIAL CASE OF .SKI3
+//	
+	if (!strcmp(s2, ".SKI3")) {
+		s3 = "3";
+		l = 3;
+		sprintf(line, "%ld\0%c", l, spechar = 's');
+		return 1;
+   }
+	
+//
+//SPECIAL CASE OF .SKI2
+//	
+	if (!strcmp(s2, ".SKI2")) {
+		s3 = "2";
+		l = 2;
+		sprintf(line, "%ld\0%c", l, spechar = 's');
+		return 1;
+   }
+	
+//
+//SPECIAL CASE OF .SKI1
+//	
+	if (!strcmp(s2, ".SKI1")) {
+		s3 = "1";
+		l = 1;
+		sprintf(line, "%ld\0%c", l, spechar = 's');
+		return 1;
+   }
+	
+	if (!strcmp(s2, ".SPACE") || !strcmp(s2, ".SKIP") ||
+		!strcmp(s2, ".SKI")) {
+		if ((j = evaluate(s3, &l) && !error)) {
 			sprintf(line, "%ld\0%c", l, spechar = 's');
-		else
-			display_error(error = 'E');
+			if(DEBUG)printf("\n%ld\0%c\n", l, spechar = 's');
+		}
+		else {
+			s3 = "1";
+			l = 1;
+			if(DEBUG)printf("\nSKIP 1\n");
+			//if ((j = evaluate(s3, &l) && !error)) {
+				sprintf(line, "%ld\0%c", l, spechar = 's');
+				if(DEBUG)printf("\n%ld\0%c\n", l, spechar = 's');
+			//}
+		}
+			// display_error(error = 'E');
+		
 		return 1;
 	}
+	
 	if (!strcmp(s2, ".FORMLN") || !strcmp(s2, ".FORML") ||
 	    !strcmp(s2, ".FORM")) {
 		if ((j = evaluate(s3, &l)))
@@ -330,34 +415,12 @@ int dir2dot() {
 			display_error(error = 'E');
 		return 1;
 	}
-	
-	if(DEBUG)printf("\n.DIRECTIVE = %s %s\n",s2,s3);
-	if (!strcmp(s2, ".SUBTTL") || !strcmp(s2, ".SUB")) {
+	if (!strcmp(s2, ".SUBTTL")) {
 		if (!*subttl) strcpy(subttl, s3);
 		spechar = 'S';
-		if(DEBUG)printf("\nSubTitle = %s\n",s3);
 		return 1;
 	}
-
-	if(DEBUG)printf("\n.DIRECTIVE = %s %s\n",s2,s3);
-	if (!strcmp(s2, ".MESSG") || !strcmp(s2, ".MSG")) {
-		printf("\nC65> %s %s\n",s2,s3);
-		//if (pass == 2) {
-		//	if ((s1 = strchr(s3, ';'))) /* trim comment */
-		//		*s1 = 0;
-		//	for (i = strlen(s3); i > 0; i--)
-		//		if (isspace(s3[i])) /* trim trailing white space
-		//		                     */
-		//			s3[i] = 0;
-		//		else
-		//			break;
-		//}
-		return 1;
-	}
-	
-	if(DEBUG)printf("\n.DIRECTIVE = %s %s\n",s2,s3);
-	if (!strcmp(s2, ".TITLE") || !strcmp(s2, ".TIL") || strcmp(s2, ".TEXT") || 
-		!strcmp(s2, ".NAM") || !strcmp(s2, ".NAME")) {
+	if (!strcmp(s2, ".TITLE") || !strcmp(s2, ".NAM")) {
 		if (pass == 1) return 1;
 		if (strcmp(name, ".MAIN.") && strcmp(name, s3))
 			display_error(error = 'F');
@@ -365,7 +428,20 @@ int dir2dot() {
 			strcpy(name, s3);
 		return 1;
 	}
-	
+	if (!strcmp(s2, ".MESSG")) {
+		if (pass == 2) {
+			if ((s1 = strchr(s3, ';'))) /* trim comment */
+				*s1 = 0;
+			for (i = strlen(s3); i > 0; i--)
+				if (isspace(s3[i])) /* trim trailing white space
+				                     */
+					s3[i] = 0;
+				else
+					break;
+			printf("\n%s\n", s3);
+		}
+		return 1;
+	}
 	return 0;
 }
 

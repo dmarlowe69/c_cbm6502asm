@@ -226,23 +226,52 @@ char parseopr() {
 	}
 	if (*s3 == '#') { /* immediate addressing mode */
 		s3++;
+//
+//FOR CHARACTER DESIGNATOR WITH A "'"
+//AND CHARACTERS FOLLOWING.
+// lda #'''		WORKED
+// LDA #''';	FAILED
+// LDA #''' ;	FAILED
+// LDA #'''    ;COMMENT	FAILED
+// NOW ALL CASES WORK
+//
 		//if ((*s3 == '\'' || *s3 == '\"') && isspace(s3[2])) {
 		if ((*s3 == '\'' || *s3 == '\"' || s3[2] == '\'' || s3[2] == '\"') && (isspace(s3[3]) || s3[3] == ';')) {
 		s3[3] = 0;
 	    s3[2] = *s3;
 		if(DEBUG) printf("\nimmediate addressing mode character= %s - %x - %x - %x - %x\n",s3,s3[0],s3[1],s3[2],s3[3]);
 		}
+//
+//SPECIAL CASE LDA #''
+//		
+		else if	((*s3 == '\'' && s3[1] == '\'')) {
+		s3[3] = 0;
+	    s3[2] = *s3;
+		if(DEBUG) printf("\nimmediate addressing mode character= %s - %x - %x - %x - %x\n",s3,s3[0],s3[1],s3[2],s3[3]);		
+		}
+//
+//SPECIAL CASE LDA #'
+//		
+		else if	((*s3 == '\'' ) && s3[1] == ' ' || s3[1]==0) {
+		s3[1] = 0x20;	
+		s3[2] = '\'';
+		s3[3] = 0;
+	    //s3[2] = *s3;
+		if(DEBUG) printf("\nimmediate addressing mode character= %s - %x - %x - %x - %x\n",s3,s3[0],s3[1],s3[2],s3[3]);		
+		}
+		
 		known = evaluate(s3, &l);
 		j = searchstr(nm7, s2, 3);
 		if (j >= 0) {
 			d[data++] = l & 255;
 			if ((op7[j] & 0x00ff) == 0x00f4) d[data++] = l >> 8;
-			if (!known || l < 256 || (op7[j] & 0x00ff) == 0x00f4) 
+			if (!known || l < 256 || (op7[j] & 0x00ff) == 0x00f4)
 				return (op7[j]);
 		}
 		display_error(error = 'O');
 		return (data = 0);
 	}
+	
 	s3l = strlen(s3);
 
 	if (toupper(s3[s3l - 5]) == 'S' &&
@@ -326,6 +355,23 @@ char parseopr() {
 		display_error(error = 'O');
 		return (data = 0);
 	}
+//
+//ALLOWS AN ALTERNATE NON-STANDARD SYNTAX
+// LDA ($ZEROPG)Y 
+// 	
+	/*      indirect Y Alternate*/
+	if (s3[s3l - 2] == ')' && toupper(s3[s3l - 1]) == 'Y' &&
+	    s3[0] == '(') {
+		strcpy(tmp, &s3[1]);
+		tmp[s3l - 3] = 0;
+		known = evaluate(tmp, &l);
+		d[data++] = l;
+		if (!known || l < 256)
+			if ((j = searchstr(nma, s2, 3)) >= 0) return (opa[j]);
+		display_error(error = 'O');
+		return (data = 0);
+	}
+
 	/*
 	        (bp),Z      indirect Z  if cputype = 3
 	        (bp)        indirect    if cputype = 1 or 2

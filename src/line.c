@@ -10,6 +10,7 @@ void parselin() {
 	char linestat[FIRSTCHAR + 1];
 	char linetmp[128] = " ";
 	char linetmp2[128] = " .ENDIF ;";
+	//char linetmp2[128] = " ";
 	char linetmp3[128] = ";";
     
 	if(crlf == FALSE) {
@@ -34,7 +35,7 @@ void parselin() {
 		*s3 = ' ';
 		}
 	}
-
+		
     if(line[0] == '.'){
 		if(strstr(line,".LIB") ||
 		 strstr(line,".FIL") ||
@@ -45,16 +46,18 @@ void parselin() {
 		 strstr(line,".NLIST") ||
 		 strstr(line,".CLIST") ||
 		 strstr(line,".NCLIST") ||
-		 strstr(line,".PAG") ||
+		 strstr(line,".SKI") ||
+		 strstr(line,".SKIP") ||
 		 strstr(line,".GEN") ||
-		 strstr(line,".NOGEN") ||
-		 strstr(line,".IFN") || 
+		 strstr(line,".NOGEN") || 
 		 strstr(line,".MESSG") || 
 		 strstr(line,".MSG") || 
 		  strstr(line,".BYT") ||
 		   strstr(line,".DBY") ||
 		    strstr(line,".WOR") ||
-             strstr(line,".END")) {
+			  strstr(line,".END") ||
+			    strstr(line,".IFN") ||
+			    strstr(line,".IFE")) {
 				strcat(linetmp,line);
 				strcpy(line,linetmp);
 				if(DEBUG) printf("\nSpace Char added to start of line - %s\n",line);
@@ -287,4 +290,3 @@ int get_line(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		parselin();
 	return (c);
 }
-

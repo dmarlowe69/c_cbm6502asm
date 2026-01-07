@@ -281,8 +281,14 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		return 1;
 	}
 
+//
+//ADDED .LIB DIRECTIVE TO MATCH RESIDENT ASSEMBLER
+//ADDED .FIL DIRECTIVE TO MATCH RESIDENT ASSEMBLER
+//
 	if (!strcmp(s2, ".INCLUDE") ||
-	    !strcmp(s2, ".INC")) { /* include ? */
+	    !strcmp(s2, ".INC") ||
+		!strcmp(s2, ".LIB") ||
+        !strcmp(s2, ".FIL"))		{ /* include ? */
 		if (!isspace(line[0])) display_error(error = 'F');
 		if (!incl_sp) {
 			display_error(error = 'N');
@@ -295,7 +301,11 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		filnamptr[incl_sp] = fnptr;
 		strcpy(&filename[fnptr], srcfile);
 		fnptr += strlen(srcfile) + 1;
-		//appendef(s3, ".src");
+		
+		if((srctype == 0) && strchr(s3,'.') == NULL) {
+			appendef(s3, ".src");
+			//printf("\nInclude File %s\n",s3);
+		}
 		for (i = strlen(s3) - 1; i > 0; i--)
 			if (s3[i] == '\\' || s3[i] == ']' ||
 			    s3[i] == ':') /* explicit path? */
@@ -317,79 +327,5 @@ int direct1(char *macprmbgn, char **maclinptr, char *macargbgn) {
 		return (print = 1);
 	}
 	
-	//ADDED .LIB DIRECTIVE TO MATCH RESIDENT ASSEMBLYER
-	
-		if (!strcmp(s2, ".LIB")) { /* libaray ? */
-		if (!isspace(line[0])) display_error(error = 'F');
-		if (!incl_sp) {
-			display_error(error = 'N');
-			return 1;
-		}
-		for (i = 0; i < strlen(s3); i++)
-			if (s3[i] <= ' ' || s3[i] == ';')
-				s3[i] = 0; /* blank or ; terminates file name */
-		incl_stack[--incl_sp] = file_src;
-		filnamptr[incl_sp] = fnptr;
-		strcpy(&filename[fnptr], srcfile);
-		fnptr += strlen(srcfile) + 1;
-		//appendef(s3, ".src");
-		for (i = strlen(s3) - 1; i > 0; i--)
-			if (s3[i] == '\\' || s3[i] == ']' ||
-			    s3[i] == ':') /* explicit path? */
-				break;    /* yes */
-		if (i <= 0) {
-			strcpy(srcfile, defipath); /* default incl path */
-			strcat(srcfile, s3);
-			strcpy(s3, srcfile);
-		}
-		for (i = 0; (srcfile[i] = toupper(s3[i])); i++)
-			;
-		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
-		printf("\nLIB File %s\n",s3);
-		file_src = fopen(s3, "r");
-		if (!file_src) {
-			file_src = incl_stack[incl_sp++];
-			error_msg("Could not open lib file:", s3, 0);
-		}
-		return (print = 1);
-	}
-	
-	//ADDED .FIL DIRECTIVE TO MATCH RESIDENT ASSEMBLYER
-	
-		if (!strcmp(s2, ".FIL")) { /* File ? */
-		if (!isspace(line[0])) display_error(error = 'F');
-		if (!incl_sp) {
-			display_error(error = 'N');
-			return 1;
-		}
-		for (i = 0; i < strlen(s3); i++)
-			if (s3[i] <= ' ' || s3[i] == ';')
-				s3[i] = 0; /* blank or ; terminates file name */
-		incl_stack[--incl_sp] = file_src;
-		filnamptr[incl_sp] = fnptr;
-		strcpy(&filename[fnptr], srcfile);
-		fnptr += strlen(srcfile) + 1;
-		//appendef(s3, ".src");
-		for (i = strlen(s3) - 1; i > 0; i--)
-			if (s3[i] == '\\' || s3[i] == ']' ||
-			    s3[i] == ':') /* explicit path? */
-				break;    /* yes */
-		if (i <= 0) {
-			strcpy(srcfile, defipath); /* default incl path */
-			strcat(srcfile, s3);
-			strcpy(s3, srcfile);
-		}
-		for (i = 0; (srcfile[i] = toupper(s3[i])); i++)
-			;
-		fprintf(file_tmp, "%sF%s\n", STATLINE, srcfile);
-        printf("\nFIL File %s\n",s3);		
-		file_src = fopen(s3, "r");
-		if (!file_src) {
-			file_src = incl_stack[incl_sp++];
-			error_msg("Could not open fil file:", s3, 0);
-		}
-		return (print = 1);
-	}
-		
 	return 0;
 }
